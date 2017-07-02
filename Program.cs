@@ -1,106 +1,39 @@
 ﻿using System;
-using System.Configuration;
-using System.Linq;
 using System.IO;
 
 namespace CopySinceDate
 {
-    class Program
-    {
-        static String mainPath = ConfigurationManager.AppSettings["MainPath"];
+	class Program
+	{
+		public static void Main()
+		{
+			var date = DateTime.MinValue;
 
-        static String[] analyzeFolders =
-            ConfigurationManager.AppSettings["AnalyzeFolders"]
-            .Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+			while (date == DateTime.MinValue)
+			{
+				Console.Write("Insert a valid date: ");
+				var dateWrote = Console.ReadLine();
 
-        static String backupFolder = 
-            Path.Combine(mainPath, DateTime.Now.ToString("yyyyMMddHHmm"));
-
-        static Int32 copiedFiles;
-
-
-
-        public static void Main()
-        {
-            var init = DateTime.MinValue;
-
-            while(init == DateTime.MinValue)
-            {
-                Console.Write("Insert a valid date: ");
-                var date = Console.ReadLine();
-
-                DateTime.TryParse(date, out init);
-            }
-
-            
-            var dirs = Directory.GetDirectories(mainPath);
-
-            foreach (var dir in dirs)
-            {
-                var dirName = dir.Replace(mainPath, "").Substring(1);
-
-                if (!analyzeFolders.Contains(dirName))
-                    continue;
-
-                copyChangesInDir(dir, init);
-            }
+				DateTime.TryParse(dateWrote, out date);
+			}
 
 
-            Console.WriteLine();
-            Console.WriteLine("Copied Files: {0}", copiedFiles);
-            Console.ReadLine();
-        }
+			var originDirectories = Directory.GetDirectories(Config.OriginPath);
 
-        private static void copyChangesInDir(String mainDir, DateTime init)
-        {
-            var newDir = mainDir.Replace(mainPath, backupFolder);
+			foreach (var originDirectory in originDirectories)
+			{
+				var destinyDirectory = originDirectory.Replace(Config.OriginPath, Config.DestinyPath);
+				
+				if (File.Exists(destinyDirectory))
+					continue;
 
-
-            var dirs = Directory.GetDirectories(mainDir);
-
-            if (ignore(mainDir))
-                return;
-
-            foreach (var dir in dirs)
-            {
-                copyChangesInDir(dir, init);
-            }
+				Copier.CopyChangesInDir(originDirectory, date);
+			}
 
 
-            var files = Directory.GetFiles(mainDir);
-
-            foreach (var file in files)
-            {
-                if (ignore(file))
-                    continue;
-
-                var info = new FileInfo(file);
-
-                if (info.LastWriteTime < init)
-                    continue;
-
-                if (!Directory.Exists(newDir))
-                    Directory.CreateDirectory(newDir);
-
-                var newFile = file.Replace(mainDir, newDir);
-
-                File.Copy(file, newFile);
-
-                copiedFiles++;
-            }
-
-
-        }
-
-        private static Boolean ignore(String path)
-        {
-            return path.Contains("Resharper") 
-                || path.Contains("dotCover")
-                || path.EndsWith("bin")
-                || path.EndsWith("obj");
-        }
-
-
-
-    }
+			Console.WriteLine();
+			Console.WriteLine("Copied Files: {0}", Copier.CopiedFiles);
+			Console.ReadLine();
+		}
+	}
 }
