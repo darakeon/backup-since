@@ -24,7 +24,7 @@ namespace CopySinceDate
 			{
 				var destinyDirectory = originDirectory.Replace(Config.OriginPath, Config.DestinyPath);
 				
-				if (File.Exists(destinyDirectory))
+				if (Directory.Exists(destinyDirectory))
 					continue;
 
 				Copier.CopyChangesInDir(originDirectory, date);
