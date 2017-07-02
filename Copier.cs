@@ -53,7 +53,8 @@ namespace CopySinceDate
 			return path.Contains("Resharper")
 			       || path.Contains("dotCover")
 			       || path.EndsWith("bin")
-			       || path.EndsWith("obj");
+				   || path.EndsWith("obj")
+				   || path.EndsWith(".hg");
 		}
 	}
 }
