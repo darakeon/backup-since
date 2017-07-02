@@ -13,9 +13,12 @@ namespace CopySinceDate
             ConfigurationManager.AppSettings["AnalyzeFolders"]
             .Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
 
-        static String backupFolder = ConfigurationManager.AppSettings["BackupFolder"];
+        static String backupFolder = 
+            Path.Combine(mainPath, DateTime.Now.ToString("yyyyMMddHHmm"));
 
-        static Int32 copiedFiles = 0;
+        static Int32 copiedFiles;
+
+
 
         public static void Main()
         {
