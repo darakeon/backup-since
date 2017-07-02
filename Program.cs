@@ -58,6 +58,9 @@ namespace CopySinceDate
 
             var dirs = Directory.GetDirectories(mainDir);
 
+            if (ignore(mainDir))
+                return;
+
             foreach (var dir in dirs)
             {
                 copyChangesInDir(dir, init);
@@ -68,6 +71,9 @@ namespace CopySinceDate
 
             foreach (var file in files)
             {
+                if (ignore(file))
+                    continue;
+
                 var info = new FileInfo(file);
 
                 if (info.LastWriteTime < init)
@@ -84,6 +90,14 @@ namespace CopySinceDate
             }
 
 
+        }
+
+        private static Boolean ignore(String path)
+        {
+            return path.Contains("Resharper") 
+                || path.Contains("dotCover")
+                || path.EndsWith("bin")
+                || path.EndsWith("obj");
         }
 
 
