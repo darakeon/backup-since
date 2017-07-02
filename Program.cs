@@ -58,9 +58,6 @@ namespace CopySinceDate
 
             var dirs = Directory.GetDirectories(mainDir);
 
-            if (isVersioned(mainDir, dirs))
-                return;
-
             foreach (var dir in dirs)
             {
                 copyChangesInDir(dir, init);
@@ -87,17 +84,6 @@ namespace CopySinceDate
             }
 
 
-        }
-
-        private static Boolean isVersioned(String mainDir, String[] dirs)
-        {
-            var hg = Path.Combine(mainDir, ".hg");
-            var svn = Path.Combine(mainDir, ".svn");
-            var git = Path.Combine(mainDir, ".git");
-            
-            return dirs.Contains(hg) 
-                || dirs.Contains(svn) 
-                || dirs.Contains(git);
         }
 
 
